@@ -9,7 +9,7 @@ import axios from 'axios'
 
 
 
-export const Closet = ({currOutfit, token}) => {
+export const Closet = ({currOutfit, setCurrOutfit, token}) => {
     const [items, setItems] = useState([])
     const [filteredList, setFilteredList] = useState([]);
     const [selectedCat, setSelectedCat] = useState("");
@@ -160,7 +160,7 @@ return (
     </FormControl>
 
     <div className="items-container">
-    {items && <ShowItems items={items}/>}
+    {items && <ShowItems items={items} currOutfit={currOutfit} setCurrOutfit={setCurrOutfit} token={token}/>}
     </div>      
     </div>
 
