@@ -38,39 +38,39 @@ const handleClick = (item) => {
     setSelectedItem(item)
     console.log(selectedItem)
 }  
-// const handleAddItem = (selectedItem, currOutfit) => {
-//     if (Object.keys(currOutfit).length === 0) {
-//         axios
-//         .post(`https://stylehub.herokuapp.com/outfit/${currOutfit.id}`,
-//         {
-//             draft: false,
-//         },{
-//             headers: {
-//                 Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
-//             },
-//         })
-//         .then((res) => {
+const handleAddItem = (selectedItem, currOutfit) => {
+    if (Object.keys(currOutfit).length === 0) {
+        axios
+        .post(`https://stylehub.herokuapp.com/outfit/${currOutfit.id}`,
+        {
+            draft: false,
+        },{
+            headers: {
+                Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+            },
+        })
+        .then((res) => {
         
-//         })
-//         .catch((err) => console.error(err))
-//         }
-//     else {
-//         axios
-//         .patch(`https://stylehub.herokuapp.com/outfit/${currOutfit.id}`,
-//         {
-//             headers : {
-//                 Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
-//             },
-//         })
-//         .then((res) => {
-//         })
-//         .catch((err) => console.error(err))
-//     }
-// }
+        })
+        .catch((err) => console.error(err))
+        }
+    else {
+        axios
+        .patch(`https://stylehub.herokuapp.com/outfit/${currOutfit.id}`,
+        {
+            headers : {
+                Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+            },
+        })
+        .then((res) => {
+        })
+        .catch((err) => console.error(err))
+    }
+}
 
 return (
     <div className='item-container'>
-        <div className='item' onClick={() => handleClick(item)}>
+        <div className='item' onClick={() => handleClick({item})}>
             <img className='item-photo' src ={image} alt={"Image for " + title}></img>
             <div className='expand-info'>
                 <div className='item-fields'>
@@ -93,7 +93,7 @@ return (
                 sx={{ borderRadius: 20, margin: '2', }}
                 variant="contained"
                 aria-label="add"
-                // onClick={() => handleAddItem(selectedItem)}
+                onClick={() => handleAddItem(selectedItem)}
                 >
                 <AddCircleIcon></AddCircleIcon> 
             </Fab>

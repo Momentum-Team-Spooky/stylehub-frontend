@@ -160,7 +160,7 @@ return (
     </FormControl>
 
     <div className="items-container">
-    <ShowItems items={items}/>
+    {items && <ShowItems items={items}/>}
     </div>      
     </div>
 
