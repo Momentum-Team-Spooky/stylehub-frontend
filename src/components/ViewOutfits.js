@@ -15,23 +15,25 @@ import IconButton from "@mui/material/IconButton";
 import Collapse from '@mui/material/Collapse';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Link } from "react-router-dom";
+import CardActionArea from "@mui/material/CardActionArea";
+import { useParams } from "react-router-dom";
 
-export const ViewOutfits = () => {
+export const ViewOutfits = ({token}) => {
     const url = 'https://stylehub.herokuapp.com/myoutfits/'
     const [outfits, setOutfits] = useState(null);
-    const AuthStr = 'Token '.concat('af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1')
 
     useEffect(() => {
         axios.get(url, {
             headers: {
-                Authorization: AuthStr,
+                Authorization: `Token ${token}`
             }
             
         })
         .then((res) => 
         setOutfits(res.data))
         // console.log(res.data.closet_item))
-    }, [])
+    }, [token])
 
     if(outfits) {
         return(
@@ -41,13 +43,19 @@ export const ViewOutfits = () => {
                     {outfits.map((outfit) => (
                         <Grid2 xs={3} key={outfit.id}>
                             <Card
-                                
                                 elevation={3}>
+                                <CardActionArea 
+                                component={Link} 
+                                to={`/outfit/${outfit.id}`}>
+                                <CardContent>
                             <DisplayOutfit
+                                token={token}
                                 outfit={outfit}
                                 location='myOutfits'
                                 />
                                 {outfit.title}
+                                </CardContent>
+                                </CardActionArea>
                             </Card>
                         </Grid2>
                     ))}

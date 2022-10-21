@@ -1,32 +1,95 @@
 import { useState } from "react";
 import { Box, Button, TextField, Typography, useStepContext, Paper } from "@mui/material";
 import Logo from '../resources/logos/StyleHub-Logo-Splash.png'
+import axios from "axios";
+import { Navigate, useNavigate } from "react-router";
 
-export const Auth = () => {
-
-const [isRegister, setIsRegister] = useState(false);
+export const Auth = ({setAuth, isLoggedIn}) => {
+const navigate = useNavigate()
+const [isRegistered, setIsRegistered] = useState(false);
 const [username, setUsername] = useState('')
 const [email, setEmail] = useState('')
 const [password, setPassword] = useState('');
+const [error, setError] = useState(null)
 
-const handleSubmit = (e) => {
+const handleRegister = (e) => {
     e.preventDefault();
     console.log(username, email, password)
+    
+    axios
+    .post('https://stylehub.herokuapp.com/auth/users/', {
+        username: username,
+        password: password,
+        email: email,
+    })
+    
+    .then(() =>
+        axios.post(
+        'https://stylehub.herokuapp.com/auth/token/login',
+        {
+        username: username,
+        password: password,
+        })
+    )
+    .then((res) =>
+        setAuth(username, res.data.auth_token))
+        // console.log(res.data.auth_token)
+    
+    .catch((error) => {
+        if (error.response.data.username)
+            setError(error.response.data.username);
+    
+        if (error.response.data.password)
+            setError(error.response.data.password)
+    })
+    
 }
 
+const handleLogin = (e) => {
+    console.log({ username, password })
+    e.preventDefault()
+    setError(null)
+
+    axios
+    .post('https://stylehub.herokuapp.com/auth/token/login/', {
+        username: username,
+        password: password,
+    })
+    .then((res) => {
+        console.log(res.data)
+        const token = res.data.auth_token
+        setAuth(username, token)
+    
+    })
+    .catch((error) => {
+        console.log(error)
+        if (error.response.data.username)
+        setError(error.response.data.username);
+    
+    if (error.response.data.password)
+        setError(error.response.data.password)
+    })
+    console.log(username, password)
+}
+
+    if (isLoggedIn) {
+        return <Navigate to="closet" />
+    }
+
 const resetState = () => {
-    setIsRegister(!isRegister);
+    setIsRegistered(!isRegistered);
     setUsername('')
     setEmail('')
     setPassword('')
+
 }
 
-// console.log(isRegister);
+// console.log(isRegistered);
 
     return (  
         <div>
             <form
-            onSubmit={handleSubmit}
+            onSubmit={isRegistered ? handleRegister : handleLogin}
             >
                 <Box
                 display="flex"
@@ -59,7 +122,7 @@ const resetState = () => {
                 required
                 />
 
-            {isRegister && 
+            {isRegistered && 
                 <TextField
                 onChange={(e) => setEmail(e.target.value)}
                 id="email"
@@ -88,20 +151,20 @@ const resetState = () => {
                 style={{ backgroundColor: "#9cc4d9" }}
                 sx={{ marginTop: 3, }}
                 >
-                    {isRegister ? "Sign up" : "Sign In"}
+                    {isRegistered ? "Sign up" : "Sign In"}
                 </Button>
 
 
                 <Typography
                 sx={{ marginTop: 3 }}> 
-                {isRegister ? "Have an account?" : "Don't have an account?"}
+                {isRegistered ? "Have an account?" : "Don't have an account?"}
                 </Typography>
 
                 <Button
                 onClick={resetState}
                 sx={{ marginTop: 0, }}
                 >
-                    {isRegister ? "Sign In" : "Sign Up"}
+                    {isRegistered ? "Sign In" : "Sign Up"}
                 </Button>
                 
                 </Box>

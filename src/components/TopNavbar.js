@@ -21,7 +21,7 @@ export const TopNavbar = () => {
 
         <Toolbar>
 
-    <Link to="/">
+    <Link to="closet">
         <IconButton>
             <Box
                 component="img"

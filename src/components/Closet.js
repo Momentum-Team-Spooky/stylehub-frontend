@@ -9,7 +9,7 @@ import axios from 'axios'
 
 
 
-export const Closet = ({currOutfit}) => {
+export const Closet = ({currOutfit, token}) => {
     const [items, setItems] = useState([])
     const [filteredList, setFilteredList] = useState([]);
     const [selectedCat, setSelectedCat] = useState("");
@@ -21,7 +21,7 @@ useEffect(() => {
     .get('https://stylehub.herokuapp.com/mycloset/',
     {
         headers: {
-            Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+            Authorization: `Token ${token}`,
         },
     })
     .then((res) => setItems(res.data))

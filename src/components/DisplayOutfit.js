@@ -1,12 +1,11 @@
 // TODO: Replace faulty image src with error image
 // TODO: Conditional display of delete button for edit outfits
-// TODO: Delete button functionality (axios call set up but not doing anything)
 
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
-export const DisplayOutfit = ({ outfit, location, setCurrOutfit }) => {
+export const DisplayOutfit = ({ outfit, location, setCurrOutfit, token }) => {
     // location determines how outfit displays depending on page it is used in. Options: 'myOutfits', 'editOutfit', 'viewOutfit'
 
     // changes image width based on location
@@ -33,26 +32,25 @@ export const DisplayOutfit = ({ outfit, location, setCurrOutfit }) => {
 
     // Clicking remove will remove closet item from outfit and display updated outfit
     const handleRemove = (closetItem) => {
-        // get outfit items, then remove requested item
+        // get outfit items, remove requested item, transform to array of the id values
         const outfitItems = outfit.closet_item
         const updatedOutfitItems = outfitItems.filter(item => item.id !== closetItem.id)
+        const updatedOutfitItemIDs = updatedOutfitItems.map(object => object.id)
         
-        // console.log(closetItem)
-        // console.log(outfit)
-        // console.log(updatedOutfitItems)
-
         axios
-            .patch(`https://stylehub.herokuapp.com/outfit/${outfit.id}`,
+            .patch(`https://stylehub.herokuapp.com/outfit-detail/${outfit.id}`,
             {
-                closet_item: updatedOutfitItems,
+                closet_item: updatedOutfitItemIDs,
             },{
                 headers: {
-                    Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+                    Authorization: `Token ${token}`,
                 },
             })
             .then((res) => {
-                console.log(res.data)
-                // setCurrOutfit(res)
+                // Reformating response data to make closet_item a array of objects instead of just the id's.
+                let outfitUpdate = res.data
+                outfitUpdate.closet_item = updatedOutfitItems
+                setCurrOutfit(outfitUpdate)
             })
             .catch((err) => console.error(err))
     }

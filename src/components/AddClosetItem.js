@@ -4,7 +4,7 @@
 // TODO (?): Replace camera image with file image if on computer?
 // TODO: Add CSS
 // TODO (?): Display option to to upload file in addition to camera?
-// TODO (?): Store different size images?
+// TODO: test all input options
 
 import React, { useEffect, useState } from "react"
 import { WithContext as ReactTags } from 'react-tag-input';
@@ -15,7 +15,7 @@ import { PhotoCamera } from "@mui/icons-material";
 import { SaveButton } from "./SaveButton";
 
 
-export const AddClosetItem = () => {
+export const AddClosetItem = (token) => {
     const [category, setCategory] = useState('')
     const [subcategory, setSubcategory] = useState('')
     const [imgFile, setImgFile] = useState('')
@@ -119,7 +119,7 @@ export const AddClosetItem = () => {
             url: 'https://stylehub.herokuapp.com/mycloset/',
             headers: {
                 'Content-Type': 'multipart/form-data; boundary=---011000010111000001101001',
-                Authorization: 'Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1'
+                Authorization: `Token ${token}`
             },
             data: form
         };
@@ -148,7 +148,9 @@ export const AddClosetItem = () => {
                     <div><select name='category' id='category' onChange = {(e) => handleChange('category', e)} required>
                         <option value=''>--Select a category--</option>
                         <option value='top'>Top</option>
+                        <option value='outerwear'>Outerwear</option>
                         <option value='bottom'>Bottom</option>
+                        <option value='shoes'>Shoes</option>
                     </select></div>
 
                     <div><label htmlFor='subcategory'>2. What subcategory is it? </label></div>
@@ -260,11 +262,33 @@ export const AddClosetItem = () => {
 const getSubcat = (category) => {
     if (category === 'top') {
         return <>
-                <option value='shirt'>Shirt</option>
-            </>
+            <option value='button-down'>Button Down</option>
+            <option value='dress'>Dress</option>
+            <option value='shirt'>Shirt</option>
+            <option value='sweater'>Sweater</option>
+            <option value='t-shirt'>T-shirt</option>
+        </>
+    }else if (category === 'outerwear') {
+        return <>
+            <option value='cardigan'>Cardigan</option>
+            <option value='coat'>Coat</option>
+            <option value='jacket'>Jacket</option>
+            <option value='vest'>Vest</option>
+        </>
     }else if (category === 'bottom') {
         return <>
             <option value='pants'>Pants</option>
+            <option value='shorts'>Shorts</option>
+            <option value='skirt'>Skirt</option>
+        </>
+    }else if (category === 'shoes') {
+        return <>
+            <option value='boots'>Boots</option>
+            <option value='flats'>Flats</option>
+            <option value='heels'>Heels</option>
+            <option value='sandals'>Sandals</option>
+            <option value='slippers'>Slippers</option>
+            <option value='sneakers'>Sneakers</option>
         </>
     }
 }

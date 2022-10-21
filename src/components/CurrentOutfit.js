@@ -1,7 +1,8 @@
 // TODO: Delete button functionality for individual items
 // TODO: Save button should move user to view outfits page
-// TODO: Tags input field
-// TODO: Finalize Tag selection list
+// TODO: Finalize Tag suggestion list
+// TODO: Look into Axios call error messages when there is no current outfit
+// TODO: Code goes blank when refreshing
 
 // Note: Debounce code for Outfit Name input/API call is based on: https://usehooks.com/useDebounce/
 
@@ -16,7 +17,7 @@ import React, { useEffect, useState } from "react"
 import { WithContext as ReactTags } from 'react-tag-input';
 
 
-export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }) => {
+export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading, token }) => {
     const [name, setName] = useState(currOutfit.title)
     const debouncedName = useDebounce(name, 500)
 
@@ -24,7 +25,7 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
     // 500ms after user stops typing Outfit Name input, API call will save name
     useEffect(() => {
         if (debouncedName) {
-            updateName(debouncedName, currOutfit)
+            updateName(debouncedName, currOutfit, token)
         }
     }, [debouncedName])
 
@@ -36,7 +37,7 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
                 draft: false,
             },{
                 headers: {
-                    Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+                    Authorization: `Token ${token}`,
                 },
             })
             .then((res) => {
@@ -51,7 +52,7 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
             .delete(`https://stylehub.herokuapp.com/outfit/${currOutfit.id}`,
             {
                 headers: {
-                    Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+                    Authorization: `Token ${token}`,
                 },
             })
             .then((res) => {
@@ -64,8 +65,11 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
     // Tag documentation found here: https://www.npmjs.com/package/react-tag-input
 
     // pull tag info from currOutfit so they display in form
-    const currOutfitTags = currOutfit.tag
-    const currOutfitTagsObj = currOutfitTags.map((x) => ({id: x, text: x}))
+    let currOutfitTagsObj=[]
+    if (Object.keys(currOutfit).length !== 0) {
+        let currOutfitTags = currOutfit.tag
+        currOutfitTagsObj = currOutfitTags.map((x) => ({id: x, text: x}))
+    }
 
     const [tags, setTags] = React.useState(currOutfitTagsObj)
 
@@ -120,7 +124,7 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
             tag: tagsToPost,
         },{
             headers: {
-                Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+                Authorization: `Token ${token}`,
             },
         })
         .then((res) => {
@@ -141,6 +145,10 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
         return(
             <>
                 <h1>Current Outfit</h1>
+
+                {/* Only display if outfit has been started */}
+                {Object.keys(currOutfit).length === 0 ? "" :
+                <>
                 <div><label htmlFor='name'>Outfit Name: </label></div>
                 <div><input
                     type='text'
@@ -163,12 +171,19 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
                 autocomplete
                 allowDeleteFromEmptyInput={false}
                 />
+                </>
+                }
 
+
+                {/* Display depends on whether outfit has been started */}
                 <p>{Object.keys(currOutfit).length === 0 ? "You haven't starting building an outfit yet. " : `You have ${currOutfit.closet_item.length} closet items in your outfit so far. `}
                 <a href='/'>Go to your closet to add items to your outfit.</a></p>
+
+
+                {/* Only display if outfit has been started */}
                 {Object.keys(currOutfit).length === 0 ? "" :
                 <><div>
-                    <DisplayOutfit outfit={currOutfit} location='editOutfit' setCurrOutfit={setCurrOutfit} />
+                    <DisplayOutfit token={token} outfit={currOutfit} location='editOutfit' setCurrOutfit={setCurrOutfit} />
                 </div>
                 <IconButton color="primary" aria-label="delete outfit" 
                 onClick={() => {
@@ -191,18 +206,18 @@ export const CurrentOutfit = ({ currOutfit, setCurrOutfit, loading, setLoading }
 }
 
 // API call for outfit name
-function updateName(nameInput, currOutfit) {
+function updateName(nameInput, currOutfit, token) {
     axios
         .patch(`https://stylehub.herokuapp.com/outfit/${currOutfit.id}`,
         {
             title: nameInput,
         },{
             headers: {
-                Authorization: `Token af6053eea103fe7a3e9c9d9e4d054cf5f7a527d1`,
+                Authorization: `Token ${token}`,
             },
         })
         .then((res) => {
-            console.log(res.data)
+            // console.log(res.data)
         })
         .catch((err) => console.error(err))
 }
