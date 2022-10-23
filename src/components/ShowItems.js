@@ -58,7 +58,6 @@ const handleAddItem = (selectedItem, currOutfit, setCurrOutfit) => {
             setCurrOutfit(res.data)
         })
         .catch((err) => console.error(err))
-        console.log(currOutfit)
     }
     else {
         
